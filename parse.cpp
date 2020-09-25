@@ -330,12 +330,12 @@ void add_op()
     {
     case t_add:
         // cout << "predict add_op --> add" << endl;
-        cout << "+ ";
+        cout << " + ";
         match(t_add);
         break;
     case t_sub:
         // cout << "predict add_op --> sub" << endl;
-        cout << "- ";
+        cout << " - ";
         match(t_sub);
         break;
     default:
@@ -349,12 +349,12 @@ void mul_op()
     {
     case t_mul:
         // cout << "predict mul_op --> mul" << endl;
-        cout << "* ";
+        cout << " * ";
         match(t_mul);
         break;
     case t_div:
         // cout << "predict mul_op --> div" << endl;
-        cout << "/ ";
+        cout << " / ";
         match(t_div);
         break;
     default:
