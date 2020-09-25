@@ -85,7 +85,6 @@ void stmt_list()
         stmt();
         stmt_list();
         break;
-        
     case t_end:
     case t_eof:
         // cout << "predict stmt_list --> epsilon" << endl;
@@ -102,21 +101,21 @@ void stmt()
     {
     case t_while:
         // cout << "predict stmt --> while cond stmt_list end" << endl;
-        cout << "(" << names[input_token] << " ";
+        cout << "(" << names[input_token] << " (";
         match(t_while);
         cond();
+        cout << ") [ ";
         stmt_list();
         match(t_end);
-        cout<< ") ";
         break;
     case t_if:
         // cout << "predict stmt --> if cond stmt_list end" << endl;
-        cout << "(" << names[input_token] << " ";
+        cout << "(" << names[input_token] << " (";
         match(t_if);
         cond();
+        cout << ") [ ";
         stmt_list();
         match(t_end);
-        cout<< ") ";
         break;
     case t_id:
         // cout << "predict stmt --> id gets expr" << endl;
@@ -125,7 +124,7 @@ void stmt()
         cout << " := ";
         match(t_gets);
         expr();
-        cout<< ") ";
+        cout << ") ";
         break;
     case t_read:
         // cout << "predict stmt --> read id" << endl;
