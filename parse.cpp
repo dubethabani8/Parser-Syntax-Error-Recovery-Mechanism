@@ -224,6 +224,8 @@ void term_tail()
     case t_less_eq:
     case t_great_eq:
     case t_end:
+    case t_if:
+    case t_while:
     case t_eof:
         // cout << "predict term_tail --> epsilon" << endl;
         break; /* epsilon production */
@@ -285,6 +287,8 @@ void factor_tail()
     case t_id:
     case t_read:
     case t_write:
+    case t_while:
+    case t_if:
     case t_eof:
         // cout << "predict factor_tail --> epsilon" << endl;
         break; /* epsilon production */
