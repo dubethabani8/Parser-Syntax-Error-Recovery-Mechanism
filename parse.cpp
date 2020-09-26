@@ -54,29 +54,21 @@ void mul_op();
 
 void program()
 {
-    try
+    switch (input_token)
     {
-        switch (input_token)
-        {
-        case t_id:
-        case t_read:
-        case t_write:
-        case t_if:
-        case t_while:
-        case t_eof:
-            // cout << "predict program --> stmt_list eof" << endl;
-            cout << "(program[ ";
-            stmt_list();
-            match(t_eof);
-            break;
-        default:
-            throw "syntax error at program";
-        }
-    }
-    catch (const char *exp)
-    {
-        cout << "Exception caught: " << endl;
-        cout << exp << endl;
+    case t_id:
+    case t_read:
+    case t_write:
+    case t_if:
+    case t_while:
+    case t_eof:
+        // cout << "predict program --> stmt_list eof" << endl;
+        cout << "(program[ ";
+        stmt_list();
+        match(t_eof);
+        break;
+    default:
+        error("program");
     }
 }
 
@@ -105,51 +97,60 @@ void stmt_list()
 
 void stmt()
 {
-    switch (input_token)
+    try
     {
-    case t_while:
-        // cout << "predict stmt --> while cond stmt_list end" << endl;
-        cout << "(" << names[input_token] << " (";
-        match(t_while);
-        cond();
-        cout << ") [ ";
-        stmt_list();
-        match(t_end);
-        break;
-    case t_if:
-        // cout << "predict stmt --> if cond stmt_list end" << endl;
-        cout << "(" << names[input_token] << " (";
-        match(t_if);
-        cond();
-        cout << ") [ ";
-        stmt_list();
-        match(t_end);
-        break;
-    case t_id:
-        // cout << "predict stmt --> id gets expr" << endl;
-        cout << "(";
-        match(t_id);
-        cout << " := ";
-        match(t_gets);
-        expr();
-        cout << ") ";
-        break;
-    case t_read:
-        // cout << "predict stmt --> read id" << endl;
-        cout << "(" << names[input_token] << " ";
-        match(t_read);
-        match(t_id);
-        cout << ") ";
-        break;
-    case t_write:
-        // cout << "predict stmt --> write expr" << endl;
-        cout << "( " << names[input_token] << " ";
-        match(t_write);
-        expr();
-        cout << ") ";
-        break;
-    default:
-        error("stmt");
+        switch (input_token)
+        {
+        case t_while:
+            // cout << "predict stmt --> while cond stmt_list end" << endl;
+            cout << "(" << names[input_token] << " (";
+            match(t_while);
+            cond();
+            cout << ") [ ";
+            stmt_list();
+            match(t_end);
+            break;
+        case t_if:
+            // cout << "predict stmt --> if cond stmt_list end" << endl;
+            cout << "(" << names[input_token] << " (";
+            match(t_if);
+            cond();
+            cout << ") [ ";
+            stmt_list();
+            match(t_end);
+            break;
+        // case t_id:
+        //     // cout << "predict stmt --> id gets expr" << endl;
+        //     cout << "(";
+        //     match(t_id);
+        //     cout << " := ";
+        //     match(t_gets);
+        //     expr();
+        //     cout << ") ";
+        //     break;
+        case t_read:
+            // cout << "predict stmt --> read id" << endl;
+            cout << "(" << names[input_token] << " ";
+            match(t_read);
+            match(t_id);
+            cout << ") ";
+            break;
+        case t_write:
+            // cout << "predict stmt --> write expr" << endl;
+            cout << "( " << names[input_token] << " ";
+            match(t_write);
+            expr();
+            cout << ") ";
+            break;
+        default:
+            throw "syntax error at stmt";
+        }
+    }
+    catch (const char *exp)
+    {
+        cout << "Exception caught: " << endl;
+        cout << exp << endl;
+        exit(1);
     }
 }
 
