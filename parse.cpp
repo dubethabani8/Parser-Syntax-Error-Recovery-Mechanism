@@ -148,8 +148,13 @@ void stmt()
     }
     catch (const char *exp)
     {
-        cout << "Exception caught: " << endl;
-        cout << exp << endl;
+        cout << "\nException caught: " << endl;
+        cout << "\t" << exp << endl;
+
+        while ()
+        {
+            input_token = scan();
+        }
         exit(1);
     }
 }
