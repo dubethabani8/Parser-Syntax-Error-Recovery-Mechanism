@@ -54,21 +54,29 @@ void mul_op();
 
 void program()
 {
-    switch (input_token)
+    try
     {
-    case t_id:
-    case t_read:
-    case t_write:
-    case t_if:
-    case t_while:
-    case t_eof:
-        // cout << "predict program --> stmt_list eof" << endl;
-        cout << "(program[ ";
-        stmt_list();
-        match(t_eof);
-        break;
-    default:
-        error("program");
+        switch (input_token)
+        {
+        case t_id:
+        case t_read:
+        case t_write:
+        case t_if:
+        case t_while:
+        case t_eof:
+            // cout << "predict program --> stmt_list eof" << endl;
+            cout << "(program[ ";
+            stmt_list();
+            match(t_eof);
+            break;
+        default:
+            throw "syntax error at program";
+        }
+    }
+    catch (const char *exp)
+    {
+        cout << "Exception caught: " << endl;
+        cout << exp << endl;
     }
 }
 
