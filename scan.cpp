@@ -7,14 +7,18 @@
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
+#include <string>
 
 #include "scan.h"
 
-char token_image[MAX_TOKEN_LEN];
-
 using namespace std;
 
-int line = 1;
+char token_image[MAX_TOKEN_LEN];
+
+int line_num = 1;
+string line_txt = "";
+char err = ' ';
+
 
 token scan()
 {
@@ -25,8 +29,10 @@ token scan()
     /* skip white space */
     while (isspace(c))
     {
-        if (c == '\n') line++;
-        c = getchar();
+        if (c == '\n') line_num++;
+        
+        line_txt += (char)c;
+        c = getc(f);
     }
 
     if (c == EOF)
@@ -41,7 +47,8 @@ token scan()
                 cout << "max token length exceeded" << endl;
                 exit(1);
             }
-            c = getchar();
+            line_txt += (char)c;
+            c = getc(f);
         } while (isalpha(c) || isdigit(c) || c == '_');
         token_image[i] = '\0';
         if (!strcmp(token_image, "read"))
@@ -63,7 +70,8 @@ token scan()
         do
         {
             token_image[i++] = c;
-            c = getchar();
+            line_txt += (char)c;
+            c = getc(f);
         } while (isdigit(c));
         token_image[i] = '\0';
         return t_literal;
@@ -72,71 +80,87 @@ token scan()
         switch (c)
         {
         case ':':
-            if ((c = getchar()) != '=')
+            line_txt += (char)c;
+            if ((c = getc(f)) != '=')
             {
                 fprintf(stderr, "error\n");
                 exit(1);
             }
             else
             {
-                c = getchar();
+                line_txt += (char)c;
+                c = getc(f);
                 return t_gets;
             }
             break;
         case '<':
-            c = getchar();
+            line_txt += (char)c;
+            c = getc(f);
             if (c == '>')
             {
-                c = getchar();
+                line_txt += (char)c;
+                c = getc(f);
                 return t_not_eq;
             }
             else if (c == '=')
             {
-                c = getchar();
+                line_txt += (char)c;
+                c = getc(f);
                 return t_less_eq;
             }
             else
             {
-                c = getchar();
+                line_txt += (char)c;
+                c = getc(f);
                 return t_less;
             }
             break;
         case '>':
-            c = getchar();
+            line_txt += (char)c;
+            c = getc(f);
             if (c == '=')
             {
-                c = getchar();
+                line_txt += (char)c;
+                c = getc(f);
                 return t_great_eq;
             }
             else
             {
-                c = getchar();
+                line_txt += (char)c;
+                c = getc(f);
                 return t_great;
             }
             break;
         case '(':
-            c = getchar();
+            line_txt += (char)c;
+            c = getc(f);
             return t_lparen;
         case ')':
-            c = getchar();
+            line_txt += (char)c;
+            c = getc(f);
             return t_rparen;
         case '+':
-            c = getchar();
+            line_txt += (char)c;
+            c = getc(f);
             return t_add;
         case '-':
-            c = getchar();
+            line_txt += (char)c;
+            c = getc(f);
             return t_sub;
         case '*':
-            c = getchar();
+            line_txt += (char)c;
+            c = getc(f);
             return t_mul;
         case '/':
-            c = getchar();
+            line_txt += (char)c;
+            c = getc(f);
             return t_div;
         case '=':
-            c = getchar();
+            line_txt += (char)c;
+            c = getc(f);
             return t_eq;
         default:
-            cout << "error" << endl;
-            exit(1);
+            err = c;
+            return t_err;
         }
 }

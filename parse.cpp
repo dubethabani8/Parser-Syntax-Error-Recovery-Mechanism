@@ -8,6 +8,8 @@
 //#include "stdio.h"
 #include <iostream>
 #include <cstdlib>
+#include <string>
+#include <fstream>
 
 #include "scan.h"
 
@@ -15,11 +17,15 @@ using namespace std;
 
 const char *names[] = {"end", "if", "while", "read", "write", "id", "literal", "gets",
                        "add", "sub", "mul", "div", "eq", "not_eq", "less", "great",
-                       "less_eq", "great_eq", "lparen", "rparen", "eof"};
+                       "less_eq", "great_eq", "lparen", "rparen", "eof", "error"};
 
 static token input_token;
 
 string output = "";
+
+FILE* f;
+const char* filename;
+string get_line_txt();
 
 bool isError = false;
 
@@ -43,8 +49,15 @@ void match(token expected)
         // cout << endl;
         input_token = scan();
     }
-    else
-        error("match");
+    else{
+        cout << "Syntax Error: Line " << line_num<< endl;
+        cout << "\t" << get_line_txt() << endl;
+        cout << "\t\t" << "Did not expect to see \"" << names[input_token] << "\" here."<< endl;
+        isError = true;
+        input_token = scan();
+        //exit(1);
+    }
+        
 }
 
 void program();
@@ -386,8 +399,23 @@ void mul_op()
     }
 }
 
-int main()
+//returns text at specific line number
+string get_line_txt(){
+
+string line_txt;
+ifstream in (filename);
+
+for(int i = 1; i < line_num; ++i) getline(in, line_txt);
+getline(in, line_txt);
+
+return line_txt;
+}
+
+int main(int argc, char** argv)
 {
+    filename = argv[1];
+    f = fopen(filename, "r");
+
     input_token = scan();
     program();
     if (!isError)
