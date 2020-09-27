@@ -127,15 +127,15 @@ void stmt()
             stmt_list();
             match(t_end);
             break;
-        // case t_id:
-        //     // cout << "predict stmt --> id gets expr" << endl;
-        //     output += "(";
-        //     match(t_id);
-        //     output += " := ";
-        //     match(t_gets);
-        //     expr();
-        //     output += ") ";
-        //     break;
+        case t_id:
+            // cout << "predict stmt --> id gets expr" << endl;
+            output += "(";
+            match(t_id);
+            output += " := ";
+            match(t_gets);
+            expr();
+            output += ") ";
+            break;
         case t_read:
             // cout << "predict stmt --> read id" << endl;
             output += "(" + string(names[input_token]) + " ";
