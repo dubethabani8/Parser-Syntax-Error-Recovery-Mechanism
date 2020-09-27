@@ -19,6 +19,10 @@ const char *names[] = {"end", "if", "while", "read", "write", "id", "literal", "
 
 static token input_token;
 
+string output = "";
+
+bool isError = false;
+
 void error(const char *prod)
 {
     cout << "syntax error at " << prod << endl;
@@ -31,7 +35,11 @@ void match(token expected)
     {
         // cout << "matched " << names[input_token];
         if (input_token == t_id || input_token == t_literal)
-            cout << "\"" << token_image << "\"";
+        {
+            output += "\"";
+            output += token_image;
+            output += "\"";
+        }
         // cout << endl;
         input_token = scan();
     }
@@ -63,7 +71,7 @@ void program()
     case t_while:
     case t_eof:
         // cout << "predict program --> stmt_list eof" << endl;
-        cout << "(program[ ";
+        output += "(program[ ";
         stmt_list();
         match(t_eof);
         break;
@@ -88,7 +96,7 @@ void stmt_list()
     case t_end:
     case t_eof:
         // cout << "predict stmt_list --> epsilon" << endl;
-        cout << "]) ";
+        output += "]) ";
         break; /* epsilon production */
     default:
         error("stmt_list");
@@ -103,44 +111,44 @@ void stmt()
         {
         case t_while:
             // cout << "predict stmt --> while cond stmt_list end" << endl;
-            cout << "(" << names[input_token] << " (";
+            output += "(" + string(names[input_token]) + " (";
             match(t_while);
             cond();
-            cout << ") [ ";
+            output += ") [ ";
             stmt_list();
             match(t_end);
             break;
         case t_if:
             // cout << "predict stmt --> if cond stmt_list end" << endl;
-            cout << "(" << names[input_token] << " (";
+            output += "(" + string(names[input_token]) + " (";
             match(t_if);
             cond();
-            cout << ") [ ";
+            output += ") [ ";
             stmt_list();
             match(t_end);
             break;
         // case t_id:
         //     // cout << "predict stmt --> id gets expr" << endl;
-        //     cout << "(";
+        //     output += "(";
         //     match(t_id);
-        //     cout << " := ";
+        //     output += " := ";
         //     match(t_gets);
         //     expr();
-        //     cout << ") ";
+        //     output += ") ";
         //     break;
         case t_read:
             // cout << "predict stmt --> read id" << endl;
-            cout << "(" << names[input_token] << " ";
+            output += "(" + string(names[input_token]) + " ";
             match(t_read);
             match(t_id);
-            cout << ") ";
+            output += ") ";
             break;
         case t_write:
             // cout << "predict stmt --> write expr" << endl;
-            cout << "( " << names[input_token] << " ";
+            output += "( " + string(names[input_token]) + " ";
             match(t_write);
             expr();
-            cout << ") ";
+            output += ") ";
             break;
         default:
             throw "syntax error at stmt";
@@ -148,14 +156,12 @@ void stmt()
     }
     catch (const char *exp)
     {
+        isError = true;
         cout << "\nException caught: " << endl;
         cout << "\t" << exp << endl;
-
-        while ()
-        {
+        while (!(input_token == t_eof || input_token == t_while || input_token == t_if ||
+                 input_token == t_read || input_token == t_write))
             input_token = scan();
-        }
-        exit(1);
     }
 }
 
@@ -246,22 +252,22 @@ void factor()
     {
     case t_literal:
         // cout << "predict factor --> literal" << endl;
-        cout << "(" << names[input_token] << " ";
+        output += "(" + string(names[input_token]) + " ";
         match(t_literal);
-        cout << ")";
+        output += ")";
         break;
     case t_id:
         // cout << "predict factor --> id" << endl;
-        cout << "(" << names[input_token] << " ";
+        output += "(" + string(names[input_token]) + " ";
         match(t_id);
-        cout << ")";
+        output += ")";
         break;
     case t_lparen:
         // cout << "predict factor --> lparen expr rparen" << endl;
-        cout << "(";
+        output += "(";
         match(t_lparen);
         expr();
-        cout << ")";
+        output += ")";
         match(t_rparen);
         break;
     default:
@@ -309,32 +315,32 @@ void row_op()
     {
     case t_eq:
         // cout << "predict row_op --> eq" << endl;
-        cout << " = ";
+        output += " = ";
         match(t_eq);
         break;
     case t_not_eq:
         // cout << "predict row_op --> not_eq" << endl;
-        cout << " <> ";
+        output += " <> ";
         match(t_not_eq);
         break;
     case t_less:
         // cout << "predict row_op --> less" << endl;
-        cout << " < ";
+        output += " < ";
         match(t_less);
         break;
     case t_great:
         // cout << "predict row_op --> great" << endl;
-        cout << " > ";
+        output += " > ";
         match(t_great);
         break;
     case t_less_eq:
         // cout << "predict row_op --> less_eq" << endl;
-        cout << " <= ";
+        output += " <= ";
         match(t_less_eq);
         break;
     case t_great_eq:
         // cout << "predict row_op --> great_eq" << endl;
-        cout << " >= ";
+        output += " >= ";
         match(t_great_eq);
         break;
     default:
@@ -348,12 +354,12 @@ void add_op()
     {
     case t_add:
         // cout << "predict add_op --> add" << endl;
-        cout << " + ";
+        output += " + ";
         match(t_add);
         break;
     case t_sub:
         // cout << "predict add_op --> sub" << endl;
-        cout << " - ";
+        output += " - ";
         match(t_sub);
         break;
     default:
@@ -367,12 +373,12 @@ void mul_op()
     {
     case t_mul:
         // cout << "predict mul_op --> mul" << endl;
-        cout << " * ";
+        output += " * ";
         match(t_mul);
         break;
     case t_div:
         // cout << "predict mul_op --> div" << endl;
-        cout << " / ";
+        output += " / ";
         match(t_div);
         break;
     default:
@@ -384,5 +390,7 @@ int main()
 {
     input_token = scan();
     program();
+    if (!isError)
+        cout << output;
     return 0;
 }
