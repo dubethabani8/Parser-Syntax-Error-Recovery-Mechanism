@@ -14,6 +14,8 @@ char token_image[MAX_TOKEN_LEN];
 
 using namespace std;
 
+int line = 1;
+
 token scan()
 {
     static int c = ' ';
@@ -23,6 +25,7 @@ token scan()
     /* skip white space */
     while (isspace(c))
     {
+        if (c == '\n') line++;
         c = getchar();
     }
 
