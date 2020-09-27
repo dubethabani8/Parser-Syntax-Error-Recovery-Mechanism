@@ -26,7 +26,7 @@ token scan()
         c = getchar();
     }
 
-    if (c == 126) ////////////////////////////////////////////////////////////
+    if (c == EOF)
         return t_eof;
     if (isalpha(c))
     {
