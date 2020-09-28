@@ -1,0 +1,6 @@
+while j < 10
+    sum := (sum + j)
+    if k <> sum
+        sum := 0
+    end
+end
